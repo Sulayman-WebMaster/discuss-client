@@ -5,11 +5,18 @@ import Footer from '../Components/Footer'
 
 const App = () => {
   return (
-    <div className='max-w-7xl mx-auto'>
-     <Header/>
-     <Outlet/>
-     <Footer/>
+   <div className='inter-regular'>
+      <div className='w-full bg-base-200'>
+        <Header />
+      </div>
+      <div className='max-w-7xl mx-auto inter-regular'>
+        <Outlet />
+      </div>
+      <div className=''>
+        <Footer />
+      </div>
     </div>
+
   )
 }
 
