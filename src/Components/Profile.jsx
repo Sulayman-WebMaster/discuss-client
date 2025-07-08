@@ -69,7 +69,7 @@ const Profile = () => {
 
           {/* Dashboard */}
           <Link
-            to="/dashboard"
+            to="/user-dashboard"
             className="flex items-center gap-3 px-5 py-3 text-gray-700 text-sm hover:bg-gray-100 transition-all"
             onClick={() => setOpen(false)}
           >

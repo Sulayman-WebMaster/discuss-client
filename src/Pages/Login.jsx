@@ -2,35 +2,33 @@ import React, { useContext } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import { AuthContext } from '../Provider/AuthProvider';
-import { useMutation } from '@tanstack/react-query';
 import { FaGithub, FaGoogle } from 'react-icons/fa';
+import { useNavigate } from 'react-router';
+import axios from 'axios';
 
 const Login = () => {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
   const { loginUser, googleSignup, githubSignup } = useContext(AuthContext);
   const { register, handleSubmit, formState: { errors } } = useForm();
 
-  const tokenMutation = useMutation({
-    mutationFn: async (email) => {
-      const res = await fetch(`${import.meta.env.VITE_BASE_URI}api/jwt/${email}`, {
-        method: 'GET',
-        credentials: 'include' 
+  const fetchToken = async (email) => {
+    try {
+      const res = await axios.get(`${import.meta.env.VITE_BASE_URI}api/jwt/${email}`, {
+        withCredentials: true,
       });
-      const data = await res.json();
-      return data.token;
-    },
-    onSuccess: () => {
       toast.success('Login successful!');
-        navigate('/'); 
-    },
-    onError: () => toast.error('Token fetch failed'),
-  });
+      navigate('/');
+    } catch (error) {
+      console.error(error);
+      toast.error('Token fetch failed');
+    }
+  };
 
   const onSubmit = async (data) => {
     try {
       const { email, password } = data;
       const result = await loginUser(email, password);
-      tokenMutation.mutate(result.user.email);
+      fetchToken(result.user.email);
     } catch (err) {
       toast.error(err.message || 'Login failed');
     }
@@ -39,7 +37,7 @@ const Login = () => {
   const handleProviderLogin = async (providerFunc) => {
     try {
       const result = await providerFunc();
-      tokenMutation.mutate(result.user.email);
+      fetchToken(result.user.email);
     } catch (err) {
       toast.error(err.message || 'Provider login failed');
     }
