@@ -1,7 +1,10 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { Link, NavLink } from 'react-router'
+import { AuthContext } from '../Provider/AuthProvider'
+import Profile from './Profile';
 
 const Header = () => {
+  const {user} = useContext(AuthContext);
   return (
     <div className='max-w-7xl mx-auto '>
       <div className="navbar py-3 px-0 flex justify-between items-center">
@@ -34,7 +37,7 @@ const Header = () => {
 
           {/* Logo */}
           <Link to="/">
-            <h3 className='text-2xl md:text-3xl font-bold text-black'>Discuss.</h3>
+            <h3 className='text-2xl md:text-3xl inter-bold font-bold text-black'>Discuss.</h3>
           </Link>
         </div>
 
@@ -46,8 +49,7 @@ const Header = () => {
                 <NavLink
                   to={path}
                   className={({ isActive }) =>
-                    `relative pb-1 transition-all duration-300 ease-in-out hover:text-black ${
-                      isActive ? 'text-black after:w-full' : 'text-gray-900 after:w-0'
+                    `relative pb-1 transition-all duration-300 ease-in-out hover:text-black ${isActive ? 'text-black after:w-full' : 'text-gray-900 after:w-0'
                     } after:absolute after:bottom-0 after:left-0 after:h-[2px] after:bg-black after:transition-all after:duration-300 hover:after:w-full`
                   }
                 >
@@ -59,20 +61,27 @@ const Header = () => {
         </div>
 
         {/* Buttons */}
-        <div className="navbar-end">
+        {user ?
+          (<div>
+            <Profile/>          
+
+          </div>):
+            (<>
+              <div className="navbar-end">
           <div className='flex gap-2'>
             <Link to="/login">
-              <button className="w-[110px] bg-black text-white py-2 rounded-full hover:bg-gray-800 transition duration-300 font-semibold shadow">
+              <button className="w-[110px] cursor-pointer bg-black text-white py-2 rounded-full hover:bg-gray-800 transition duration-300 font-semibold shadow">
                 Login
               </button>
             </Link>
             <Link to="/signup">
-              <button className="w-[110px] border border-black text-black py-2 rounded-full hover:bg-black hover:text-white transition duration-300 font-semibold shadow">
+              <button className="w-[110px] cursor-pointer border border-black text-black py-2 rounded-full hover:bg-black hover:text-white transition duration-300 font-semibold shadow">
                 Sign Up
               </button>
             </Link>
           </div>
         </div>
+              </>)}
       </div>
     </div>
   )

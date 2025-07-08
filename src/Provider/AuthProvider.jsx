@@ -9,6 +9,7 @@ import {
     GoogleAuthProvider,
     GithubAuthProvider,
     fetchSignInMethodsForEmail,
+    updateProfile,
 } from 'firebase/auth';
 import app from '../Utils/Firebase';
 import { toast } from 'react-toastify';
@@ -26,6 +27,12 @@ const AuthProvider = ({ children }) => {
     const createUser = (email, password) => {
         setLoading(true);
         return createUserWithEmailAndPassword(auth, email, password);
+    };
+    const updateUser = (profile) => {
+        return updateProfile(auth.currentUser, {
+            displayName: profile?.displayName,
+            photoURL: profile?.photoURL,
+        });
     };
 
     const loginUser = (email, password) => {
@@ -47,6 +54,7 @@ const AuthProvider = ({ children }) => {
                     progress: undefined,
                     theme: 'light',
                 });
+                
             })
             .catch((error) => {
                 toast(error.message, {
@@ -64,7 +72,7 @@ const AuthProvider = ({ children }) => {
 
 
 
-    const handleGoogleSignIn = async () => {
+    const googleSignup = async () => {
         setLoading(true);
         try {
             const result = await signInWithPopup(auth, googleProvider);
@@ -91,7 +99,7 @@ const AuthProvider = ({ children }) => {
         }
     };
 
-    const githubLogin = async () => {
+    const githubSignup = async () => {
         setLoading(true);
         try {
             const result = await signInWithPopup(auth, githubProvider);
@@ -120,7 +128,7 @@ const AuthProvider = ({ children }) => {
     };
 
 
-    
+
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -137,8 +145,9 @@ const AuthProvider = ({ children }) => {
         createUser,
         loginUser,
         handleLogout,
-        handleGoogleSignIn,
-        githubLogin,
+        googleSignup,
+        githubSignup,
+        updateUser,
     };
 
     return <AuthContext.Provider value={authData}>{children}</AuthContext.Provider>;
