@@ -9,6 +9,7 @@ import Profile from "../Pages/Dashboard/Profile";
 import AddPost from "../Pages/Dashboard/AddPost";
 import MyPost from "../Pages/Dashboard/Mypost";
 import Membership from "../Pages/Membership";
+import PostDetails from "../Pages/PostDetails";
 
 
 export const router = createBrowserRouter([
@@ -31,6 +32,10 @@ export const router = createBrowserRouter([
             {
                 path:"membership",
                 element: <Membership/>
+            },
+            {
+                path:"post/:id",
+                element: <PostDetails/>
             }
         ]
     },

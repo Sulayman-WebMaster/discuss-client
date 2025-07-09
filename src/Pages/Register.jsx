@@ -10,7 +10,7 @@ const imgbbApiKey = '7648b5e8c439a674a01fa42348137dbe';
 
 const Register = () => {
   const navigate = useNavigate();
-  const { createUser, updateUser, googleSignup, githubSignup } = useContext(AuthContext);
+  const { createUser, updateUser, googleSignup, githubSignup,setUserId } = useContext(AuthContext);
   const { register, handleSubmit, formState: { errors }, reset } = useForm();
   const [uploading, setUploading] = useState(false);
 
@@ -26,11 +26,12 @@ const Register = () => {
 
   const saveUserToDB = async ({ email, name, image }) => {
     try {
-      await axios.post(`${import.meta.env.VITE_BASE_URI}api/user`, {
+      const res= await axios.post(`${import.meta.env.VITE_BASE_URI}api/user`, {
         email,
         name,
         image,
       }, { withCredentials: true });
+      setUserId(res.data.user._id)
     } catch (err) {
       console.error('User save error:', err);
       toast.error('Failed to save user to DB');
