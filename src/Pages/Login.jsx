@@ -11,24 +11,46 @@ const Login = () => {
   const { loginUser, googleSignup, githubSignup } = useContext(AuthContext);
   const { register, handleSubmit, formState: { errors } } = useForm();
 
+  const baseUrl = import.meta.env.VITE_BASE_URI;
+
   const fetchToken = async (email) => {
     try {
-      const res = await axios.get(`${import.meta.env.VITE_BASE_URI}api/jwt/${email}`, {
+      await axios.get(`${baseUrl}api/jwt/${email}`, {
         withCredentials: true,
       });
-      toast.success('Login successful!');
-      navigate('/');
     } catch (error) {
       console.error(error);
       toast.error('Token fetch failed');
     }
   };
 
+  const saveUser = async (user) => {
+    try {
+      await axios.post(`${baseUrl}api/user`, {
+        name: user.displayName,
+        email: user.email,
+        image: user.photoURL
+      }, {
+        withCredentials: true
+      });
+    } catch (err) {
+      console.error(err);
+      toast.error('Saving user info failed');
+    }
+  };
+
+  const handleLoginSuccess = async (user) => {
+    await saveUser(user);
+    await fetchToken(user.email);
+    toast.success('Login successful!');
+    navigate('/');
+  };
+
   const onSubmit = async (data) => {
     try {
       const { email, password } = data;
       const result = await loginUser(email, password);
-      fetchToken(result.user.email);
+      handleLoginSuccess(result.user);
     } catch (err) {
       toast.error(err.message || 'Login failed');
     }
@@ -37,7 +59,7 @@ const Login = () => {
   const handleProviderLogin = async (providerFunc) => {
     try {
       const result = await providerFunc();
-      fetchToken(result.user.email);
+      handleLoginSuccess(result.user);
     } catch (err) {
       toast.error(err.message || 'Provider login failed');
     }

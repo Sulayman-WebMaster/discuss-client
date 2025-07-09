@@ -1,45 +1,49 @@
 import React, { useContext, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
-import { useMutation } from '@tanstack/react-query';
+import axios from 'axios';
 import { AuthContext } from '../Provider/AuthProvider';
 import { FaGithub, FaGoogle, FaUpload } from 'react-icons/fa';
 import { useNavigate } from 'react-router';
 
-const imgbbApiKey = '7648b5e8c439a674a01fa42348137dbe'; 
-
+const imgbbApiKey = '7648b5e8c439a674a01fa42348137dbe';
 
 const Register = () => {
-    const navigate = useNavigate();
-  const { createUser, updateUser, googleSignup, githubSignup,handleLogout } = useContext(AuthContext);
+  const navigate = useNavigate();
+  const { createUser, updateUser, googleSignup, githubSignup } = useContext(AuthContext);
   const { register, handleSubmit, formState: { errors }, reset } = useForm();
   const [uploading, setUploading] = useState(false);
 
-  const tokenMutation = useMutation({
-  mutationFn: async (email) => {
-    const res = await fetch(`${import.meta.env.VITE_BASE_URI}api/jwt/${email}`, {
-      method: 'GET',
-      credentials: 'include' 
-    });
-    const data = await res.json();
-    return data.token;
-  },
-  onSuccess: (token) => {
-    toast.success('Signup Successful!');       
-  },
-  onError: () => {
-    toast.error('Failed to fetch token')
-    return
-  },
-});
+  const fetchToken = async (email) => {
+    try {
+      await axios.get(`${import.meta.env.VITE_BASE_URI}api/jwt/${email}`, {
+        withCredentials: true,
+      });
+    } catch (error) {
+      toast.error("JWT token fetch failed");
+    }
+  };
+
+  const saveUserToDB = async ({ email, name, image }) => {
+    try {
+      await axios.post(`${import.meta.env.VITE_BASE_URI}api/user`, {
+        email,
+        name,
+        image,
+      }, { withCredentials: true });
+    } catch (err) {
+      console.error('User save error:', err);
+      toast.error('Failed to save user to DB');
+    }
+  };
 
   const onSubmit = async (data) => {
-    try {
-      const { name, email, password, image } = data;
-      const imageFile = image[0];
+    const { name, email, password, image } = data;
 
-      // Upload to imgbb
+    try {
+      const imageFile = image[0];
       setUploading(true);
+
       const formData = new FormData();
       formData.append('image', imageFile);
 
@@ -47,23 +51,25 @@ const Register = () => {
         method: 'POST',
         body: formData,
       });
-      const imgbbData = await imgbbRes.json();
-      setUploading(false);
 
-      if (!imgbbData.success) {
-        throw new Error('Image upload failed');
-      }
+      const imgbbData = await imgbbRes.json();
+      if (!imgbbData.success) throw new Error('Image upload failed');
 
       const imageUrl = imgbbData.data.url;
 
       await createUser(email, password);
       await updateUser({ displayName: name, photoURL: imageUrl });
 
-      tokenMutation.mutate(email);
+      await saveUserToDB({ email, name, image: imageUrl });
+      await fetchToken(email);
+
+      toast.success('Registration successful!');
       reset();
-        navigate('/');
+      navigate('/');
     } catch (err) {
+      console.error(err);
       toast.error(err.message || 'Signup failed');
+    } finally {
       setUploading(false);
     }
   };
@@ -71,7 +77,12 @@ const Register = () => {
   const handleProviderLogin = async (providerFunc) => {
     try {
       const result = await providerFunc();
-      tokenMutation.mutate(result.user.email);
+      const { displayName, email, photoURL } = result.user;
+
+      await saveUserToDB({ name: displayName, email, image: photoURL });
+      await fetchToken(email);
+
+      toast.success('Login successful!');
       navigate('/');
     } catch (err) {
       toast.error(err.message || 'Provider login failed');
@@ -95,10 +106,7 @@ const Register = () => {
 
         <input
           placeholder="Email"
-          {...register("email", {
-            required: true,
-            pattern: /^\S+@\S+$/i,
-          })}
+          {...register("email", { required: true, pattern: /^\S+@\S+$/i })}
           className="w-full mb-3 px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
         {errors.email && <p className="text-sm text-red-500 mb-2">Valid email is required</p>}
@@ -118,7 +126,7 @@ const Register = () => {
         />
         {errors.password && <p className="text-sm text-red-500 mb-2">{errors.password.message}</p>}
 
-        {/* File Upload with Icon */}
+        {/* File Upload */}
         <label className="w-full mb-3 cursor-pointer flex items-center gap-3 border px-4 py-2 rounded-md bg-gray-100 hover:bg-gray-200 transition">
           <FaUpload className="text-gray-600" />
           <span className="text-sm text-gray-700">Upload Profile Picture</span>
@@ -140,7 +148,7 @@ const Register = () => {
           {uploading ? 'Uploading...' : 'Sign Up'}
         </button>
 
-        {/* OAuth Buttons */}
+        {/* OAuth */}
         <div className="flex justify-center space-x-4 mt-5">
           <button
             type="button"

@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect, useContext } from 'react';
 import { FaMedal, FaSignOutAlt, FaTachometerAlt } from 'react-icons/fa';
 import { Link } from 'react-router';
-import { toast } from 'react-toastify';
 import { AuthContext } from '../Provider/AuthProvider';
 
 const Profile = () => {
@@ -38,7 +37,7 @@ const Profile = () => {
     <div className="relative inline-block text-left" ref={dropdownRef}>
       {/* Avatar */}
       <div
-        className="relative cursor-pointer group"
+        className=" cursor-pointer group"
         onClick={() => setOpen(!open)}
       >
         <img
@@ -46,9 +45,7 @@ const Profile = () => {
           alt="Profile"
           className="w-12 h-12 rounded-full border-2 border-gray-800 object-cover shadow-md transition-transform duration-200 group-hover:scale-105"
         />
-        <span className="absolute -bottom-1.5 -right-1.5 bg-white p-[2px] rounded-full shadow-md border border-gray-700">
-          <FaMedal className="text-[#cd7f32] text-base" title="Bronze Badge" />
-        </span>
+     
       </div>
 
       {/* Dropdown */}

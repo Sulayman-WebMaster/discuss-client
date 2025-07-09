@@ -7,6 +7,8 @@ import Register from "../Pages/Register";
 import UserDashboardLayout from "../Pages/Dashboard/UserDashboardLayout";
 import Profile from "../Pages/Dashboard/Profile";
 import AddPost from "../Pages/Dashboard/AddPost";
+import MyPost from "../Pages/Dashboard/Mypost";
+import Membership from "../Pages/Membership";
 
 
 export const router = createBrowserRouter([
@@ -25,6 +27,10 @@ export const router = createBrowserRouter([
             {
                 path: "signup",
                 element: <Register/>
+            },
+            {
+                path:"membership",
+                element: <Membership/>
             }
         ]
     },
@@ -43,6 +49,14 @@ export const router = createBrowserRouter([
             {
                 path: "add-post",
                 element: <AddPost/>
+            },
+            {
+                path: "profile",
+                element: <Profile/>
+            },
+            {
+                path: "myposts",
+                element: <MyPost/>
             }
             
         ]

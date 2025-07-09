@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink, Outlet } from 'react-router';
-import { FaUser, FaPlusCircle, FaListUl } from 'react-icons/fa';
+import { FaUser, FaPlusCircle, FaListUl, FaHome } from 'react-icons/fa';
 
 const UserDashboardLayout = () => {
   return (
@@ -11,6 +11,16 @@ const UserDashboardLayout = () => {
           Dashboard
         </h1>
         <nav className="flex flex-col gap-4">
+          <NavLink
+            to="/"
+            className={({ isActive }) =>
+              isActive
+                ? 'bg-white text-black p-3 rounded-md font-semibold flex items-center gap-3 transition'
+                : 'hover:bg-gray-800 p-3 rounded-md flex items-center gap-3 transition'
+            }
+          >
+            <FaHome className="text-lg" /> Back Home
+          </NavLink>
           <NavLink
             to="profile"
             className={({ isActive }) =>
@@ -34,7 +44,7 @@ const UserDashboardLayout = () => {
           </NavLink>
 
           <NavLink
-            to="my-posts"
+            to="myposts"
             className={({ isActive }) =>
               isActive
                 ? 'bg-white text-black p-3 rounded-md font-semibold flex items-center gap-3 transition'
