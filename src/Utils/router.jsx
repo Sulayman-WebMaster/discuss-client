@@ -18,6 +18,7 @@ import Unauthorized from "../Pages/Unauthorized";
 import UserOnly from "../Pages/Dashboard/UserOnly";
 import ManageUser from "../Pages/Admin/ManageUser";
 import AdminProfile from "../Pages/Admin/AdminProfile";
+import AnnouncementForm from "../Pages/Admin/Annoucement";
 
 
 export const router = createBrowserRouter([
@@ -98,6 +99,10 @@ export const router = createBrowserRouter([
             {
                 path: "admin-profile",
                 element: <AdminProfile/>
+            },
+            {
+                path: "announcements",
+                element: <AnnouncementForm/>
             }
           
             

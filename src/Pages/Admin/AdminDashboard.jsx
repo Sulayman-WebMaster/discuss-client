@@ -18,12 +18,12 @@ const AdminDashboard = () => {
     { to: 'admin-profile', label: 'Admin Profile', icon: <FaUserShield /> },
     { to: 'manage-users', label: 'Manage Users', icon: <FaUsersCog /> },
     { to: 'reported', label: 'Reported Activities', icon: <FaExclamationTriangle /> },
-    { to: 'announcement', label: 'Make Announcement', icon: <FaBullhorn /> },
+    { to: 'announcements', label: 'Announcement', icon: <FaBullhorn /> },
   ];
 
   return (
     <div className="flex flex-col md:flex-row h-screen text-gray-900">
-      {/* Mobile Nav */}
+
       <div className="md:hidden bg-black text-white p-4 flex justify-between items-center">
         <h1 className="text-2xl font-bold">Admin Panel</h1>
         <button onClick={() => setIsOpen(!isOpen)} className="text-white text-2xl focus:outline-none">
@@ -31,7 +31,7 @@ const AdminDashboard = () => {
         </button>
       </div>
 
-      {/* Sidebar */}
+    
       <div
         className={`${
           isOpen ? 'block' : 'hidden'
