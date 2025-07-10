@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useContext } from 'react';
-import { FaMedal, FaSignOutAlt, FaTachometerAlt } from 'react-icons/fa';
+import { FaSignOutAlt, FaTachometerAlt } from 'react-icons/fa';
 import { Link } from 'react-router';
 import { AuthContext } from '../Provider/AuthProvider';
 
@@ -23,21 +23,24 @@ const Profile = () => {
   const photoURL =
     user?.photoURL ||
     'https://i.postimg.cc/rmzgbYvr/Screenshot-2025-05-06-192351.png';
-
+  
   const handleLogoutClick = async () => {
     handleLogout();
     await fetch(`${import.meta.env.VITE_BASE_URI}logout`, {
-  method: 'POST',
-  credentials: 'include',
-});
-       setOpen(false);
+      method: 'POST',
+      credentials: 'include',
+    });
+    setOpen(false);
   };
+
+  
+  const role = user?.role || 'user'; 
 
   return (
     <div className="relative inline-block text-left" ref={dropdownRef}>
       {/* Avatar */}
       <div
-        className=" cursor-pointer group"
+        className="cursor-pointer group"
         onClick={() => setOpen(!open)}
       >
         <img
@@ -45,7 +48,6 @@ const Profile = () => {
           alt="Profile"
           className="w-12 h-12 rounded-full border-2 border-gray-800 object-cover shadow-md transition-transform duration-200 group-hover:scale-105"
         />
-     
       </div>
 
       {/* Dropdown */}
@@ -64,17 +66,17 @@ const Profile = () => {
             </div>
           </div>
 
-          {/* Dashboard */}
+          {/* Dashboard Link */}
           <Link
-            to="/user-dashboard"
+            to={role === 'admin' ? '/admin-dashboard' : '/user-dashboard'}
             className="flex items-center gap-3 px-5 py-3 text-gray-700 text-sm hover:bg-gray-100 transition-all"
             onClick={() => setOpen(false)}
           >
             <FaTachometerAlt className="text-gray-500" />
-            Dashboard
+            {role === 'admin' ? 'Admin Dashboard' : 'User Dashboard'}
           </Link>
 
-          {/* Logout */}
+         
           <button
             onClick={handleLogoutClick}
             className="flex items-center gap-3 w-full text-left px-5 py-3 text-red-600 text-sm hover:bg-red-50 transition-all border-t border-gray-100"

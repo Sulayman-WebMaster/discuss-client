@@ -1,8 +1,9 @@
 import React, { useContext } from 'react';
 import { Navigate, useLocation } from 'react-router';
-import { AuthContext } from './AuthProvider';
+import { AuthContext } from '../../Provider/AuthProvider';
 
-const Admin = ({ children }) => {
+
+const UserOnly = ({ children }) => {
   const { user, loading } = useContext(AuthContext);
   const location = useLocation();
 
@@ -15,17 +16,16 @@ const Admin = ({ children }) => {
   }
 
   if (!user) {
-  
+    
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  if (user?.role !== 'admin') {
+  if (user?.role === 'admin') {
     
-    return <Navigate to="/unauthorized" replace />;
+    return <Navigate to="/admin-dashboard" replace />;
   }
 
- 
   return children;
 };
 
-export default Admin;
+export default UserOnly;

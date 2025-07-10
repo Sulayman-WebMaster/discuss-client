@@ -1,157 +1,167 @@
 import React, { createContext, useEffect, useState } from 'react';
 import {
-    createUserWithEmailAndPassword,
-    getAuth,
-    onAuthStateChanged,
-    signInWithEmailAndPassword,
-    signInWithPopup,
-    signOut,
-    GoogleAuthProvider,
-    GithubAuthProvider,
-    fetchSignInMethodsForEmail,
-    updateProfile,
+  createUserWithEmailAndPassword,
+  getAuth,
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
+  signInWithPopup,
+  signOut,
+  GoogleAuthProvider,
+  GithubAuthProvider,
+  fetchSignInMethodsForEmail,
+  updateProfile,
 } from 'firebase/auth';
 import app from '../Utils/Firebase';
+import axios from 'axios'; 
 import { toast } from 'react-toastify';
 
 export const AuthContext = createContext();
 const auth = getAuth(app);
 
 const AuthProvider = ({ children }) => {
+  const googleProvider = new GoogleAuthProvider();
+  const githubProvider = new GithubAuthProvider();
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-    const googleProvider = new GoogleAuthProvider();
-    const githubProvider = new GithubAuthProvider();
-    const [user, setUser] = useState(null);
-    const [loading, setLoading] = useState(true);
-    
+  const createUser = (email, password) => {
+    setLoading(true);
+    return createUserWithEmailAndPassword(auth, email, password);
+  };
 
-    const createUser = (email, password) => {
-        setLoading(true);
-        return createUserWithEmailAndPassword(auth, email, password);
-    };
-    const updateUser = (profile) => {
-        return updateProfile(auth.currentUser, {
-            displayName: profile?.displayName,
-            photoURL: profile?.photoURL,
+  const updateUser = (profile) => {
+    return updateProfile(auth.currentUser, {
+      displayName: profile?.displayName,
+      photoURL: profile?.photoURL,
+    });
+  };
+
+  const loginUser = (email, password) => {
+    setLoading(true);
+    return signInWithEmailAndPassword(auth, email, password);
+  };
+
+  const handleLogout = () => {
+    return signOut(auth)
+      .then(() => {
+        setUser(null);
+        toast('User logged out successfully!', {
+          position: 'top-right',
+          autoClose: 5000,
+          theme: 'light',
         });
-    };
-
-    const loginUser = (email, password) => {
-        setLoading(true);
-        return signInWithEmailAndPassword(auth, email, password);
-    };
-
-    const handleLogout = () => {
-        return signOut(auth)
-            .then(() => {
-                setUser(null);
-                toast('User logged out successfully!', {
-                    position: 'top-right',
-                    autoClose: 5000,
-                    hideProgressBar: false,
-                    closeOnClick: false,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                    theme: 'light',
-                });
-                
-            })
-            .catch((error) => {
-                toast(error.message, {
-                    position: 'top-right',
-                    autoClose: 5000,
-                    hideProgressBar: false,
-                    closeOnClick: false,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                    theme: 'light',
-                });
-            });
-    };
-
-
-
-    const googleSignup = async () => {
-        setLoading(true);
-        try {
-            const result = await signInWithPopup(auth, googleProvider);
-            setUser(result.user);
-            return result;
-        } catch (error) {
-            if (error.code === 'auth/account-exists-with-different-credential') {
-                const email = error.customData.email;
-                const pendingCred = error.credential;
-
-                const methods = await fetchSignInMethodsForEmail(auth, email);
-
-                toast.error(
-                    `An account already exists with the email ${email}. Please sign in using: ${methods.join(', ')}`
-                );
-
-                // You could optionally prompt user to sign in with the first method and link accounts here
-            } else {
-                toast.error(error.message);
-            }
-            throw error;
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const githubSignup = async () => {
-        setLoading(true);
-        try {
-            const result = await signInWithPopup(auth, githubProvider);
-            setUser(result.user);
-            return result;
-        } catch (error) {
-            if (error.code === 'auth/account-exists-with-different-credential') {
-                const email = error.customData.email;
-                const pendingCred = error.credential;
-
-                const methods = await fetchSignInMethodsForEmail(auth, email);
-
-                toast.error(
-                    `An account already exists with the email ${email}. Please sign in using: ${methods.join(', ')}`
-                );
-
-                // Optionally: prompt user to login with existing provider and link accounts here
-
-            } else {
-                toast.error(error.message);
-            }
-            throw error;
-        } finally {
-            setLoading(false);
-        }
-    };
-
-
-
-
-    useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-            setUser(currentUser);
-            setLoading(false);
+      })
+      .catch((error) => {
+        toast(error.message, {
+          position: 'top-right',
+          autoClose: 5000,
+          theme: 'light',
         });
-        return () => unsubscribe();
-    }, []);
+      });
+  };
 
-    const authData = {
-        user,
-        setUser,      
-        loading,
-        createUser,
-        loginUser,
-        handleLogout,
-        googleSignup,
-        githubSignup,
-        updateUser,
-    };
+  const googleSignup = async () => {
+    setLoading(true);
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      setUser(result.user);
+      return result;
+    } catch (error) {
+      if (error.code === 'auth/account-exists-with-different-credential') {
+        const email = error.customData.email;
+        const methods = await fetchSignInMethodsForEmail(auth, email);
+        toast.error(
+          `Account exists with ${email}. Use: ${methods.join(', ')}`
+        );
+      } else {
+        toast.error(error.message);
+      }
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    return <AuthContext.Provider value={authData}>{children}</AuthContext.Provider>;
+  const githubSignup = async () => {
+    setLoading(true);
+    try {
+      const result = await signInWithPopup(auth, githubProvider);
+      setUser(result.user);
+      return result;
+    } catch (error) {
+      if (error.code === 'auth/account-exists-with-different-credential') {
+        const email = error.customData.email;
+        const methods = await fetchSignInMethodsForEmail(auth, email);
+        toast.error(
+          `Account exists with ${email}. Use: ${methods.join(', ')}`
+        );
+      } else {
+        toast.error(error.message);
+      }
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+ 
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      setLoading(true);
+      if (currentUser) {
+        try {
+          const res = await axios.get(
+            `${import.meta.env.VITE_BASE_URI}api/user/${currentUser.email}`,
+            { withCredentials: true }
+          );
+
+          const dbUser = res.data;
+      
+
+          setUser({
+            uid: currentUser.uid,
+            email: currentUser.email,
+            displayName: currentUser.displayName,
+            photoURL: currentUser.photoURL,
+            role: dbUser.role || 'user', 
+          });
+   
+        } catch (error) {
+          console.error('Error fetching user role:', error);
+          setUser({
+            uid: currentUser.uid,
+            email: currentUser.email,
+            displayName: currentUser.displayName,
+            photoURL: currentUser.photoURL,
+            role: 'user',
+          });
+        }
+      } else {
+        setUser(null);
+      }
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  const authData = {
+    user,
+    setUser,
+    loading,
+    createUser,
+    loginUser,
+    handleLogout,
+    googleSignup,
+    githubSignup,
+    updateUser,
+  };
+
+  return (
+    <AuthContext.Provider value={authData}>
+      {children}
+    </AuthContext.Provider>
+  );
 };
 
 export default AuthProvider;

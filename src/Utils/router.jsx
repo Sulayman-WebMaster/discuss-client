@@ -11,6 +11,13 @@ import MyPost from "../Pages/Dashboard/Mypost";
 import Membership from "../Pages/Membership";
 import PostDetails from "../Pages/PostDetails";
 import Success from "../Pages/Success";
+import Admin from "../Provider/Admin";
+import AdminDashboard from "../Pages/Admin/AdminDashboard";
+import AdminHome from "../Pages/Admin/AdminHome";
+import Unauthorized from "../Pages/Unauthorized";
+import UserOnly from "../Pages/Dashboard/UserOnly";
+import ManageUser from "../Pages/Admin/ManageUser";
+import AdminProfile from "../Pages/Admin/AdminProfile";
 
 
 export const router = createBrowserRouter([
@@ -41,7 +48,12 @@ export const router = createBrowserRouter([
             {
                 path: "success",
                 element: <Success/>
+            },
+            {
+                path: "unauthorized",
+                element: <Unauthorized/>
             }
+           
         ]
     },
     {
@@ -50,7 +62,7 @@ export const router = createBrowserRouter([
     },
     {
         path: "/user-dashboard",
-        element: <UserDashboardLayout/>,
+        element: <UserOnly><UserDashboardLayout/></UserOnly>,
         children:[
             {
                 index: true,
@@ -70,5 +82,26 @@ export const router = createBrowserRouter([
             }
             
         ]
+    },
+    {
+        path: "/admin-dashboard",
+        element: <Admin><AdminDashboard/></Admin>,
+        children:[
+            {
+                index: true,
+                element: <AdminHome/>
+            },
+            {
+                path: "manage-users",
+                element: <ManageUser/>
+            },
+            {
+                path: "admin-profile",
+                element: <AdminProfile/>
+            }
+          
+            
+        ]
     }
+
 ],)
