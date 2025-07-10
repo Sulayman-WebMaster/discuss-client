@@ -10,6 +10,7 @@ import AddPost from "../Pages/Dashboard/AddPost";
 import MyPost from "../Pages/Dashboard/Mypost";
 import Membership from "../Pages/Membership";
 import PostDetails from "../Pages/PostDetails";
+import Success from "../Pages/Success";
 
 
 export const router = createBrowserRouter([
@@ -36,6 +37,10 @@ export const router = createBrowserRouter([
             {
                 path:"post/:id",
                 element: <PostDetails/>
+            },
+            {
+                path: "success",
+                element: <Success/>
             }
         ]
     },
