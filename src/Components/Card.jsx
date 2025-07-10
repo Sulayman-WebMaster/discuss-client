@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router';
-import { MessageCircle, ArrowDown, ArrowUp, Flame } from 'lucide-react';
-
+import {  ArrowDown, ArrowUp, Flame } from 'lucide-react';
+import { BiRepost } from "react-icons/bi";
 const Card = () => {
   const [posts, setPosts] = useState([]);
   const [sort, setSort] = useState('latest');
@@ -31,7 +31,10 @@ const Card = () => {
   return (
     <section className="max-w-7xl mx-auto px-4 py-10">
       <div className="flex items-center justify-between mb-8">
-        <h2 className="text-3xl font-extrabold text-gray-800">Posts</h2>
+           <div className="flex items-center gap-3 mb-10">
+        <BiRepost className="w-10 h-10 text-black" />
+        <h2 className="text-3xl font-bold text-black">Posts</h2>
+      </div>
         <button
           onClick={() => setSort(sort === 'latest' ? 'popular' : 'latest')}
           className="flex items-center gap-2 bg-black text-white px-4 py-2 rounded-full hover:bg-gray-800 transition text-sm font-medium"

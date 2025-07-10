@@ -19,6 +19,7 @@ import UserOnly from "../Pages/Dashboard/UserOnly";
 import ManageUser from "../Pages/Admin/ManageUser";
 import AdminProfile from "../Pages/Admin/AdminProfile";
 import AnnouncementForm from "../Pages/Admin/Annoucement";
+import Reported from "../Pages/Admin/Reported";
 
 
 export const router = createBrowserRouter([
@@ -103,6 +104,10 @@ export const router = createBrowserRouter([
             {
                 path: "announcements",
                 element: <AnnouncementForm/>
+            },
+            {
+                path:"reported",
+                element:<Reported/>
             }
           
             
