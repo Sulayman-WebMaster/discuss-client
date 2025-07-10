@@ -8,7 +8,7 @@ import axios from 'axios';
 
 const Login = () => {
   const navigate = useNavigate();
-  const { loginUser, googleSignup, githubSignup, setUserId } = useContext(AuthContext);
+  const { loginUser, googleSignup, githubSignup } = useContext(AuthContext);
   const { register, handleSubmit, formState: { errors } } = useForm();
   const [loading, setLoading] = useState(false);
 
@@ -36,10 +36,7 @@ const Login = () => {
         withCredentials: true,
       });
 
-      if (res.data?.user?._id) {
-        setUserId(res.data.user._id);
-      }
-    } catch (err) {
+         } catch (err) {
       console.error(err);
       toast.error('Saving user info failed');
       throw err;

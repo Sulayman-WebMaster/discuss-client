@@ -8,19 +8,19 @@ const Card = () => {
   const [sort, setSort] = useState('latest');
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-
   const baseUrl = import.meta.env.VITE_BASE_URI;
 
   const fetchPosts = async () => {
     try {
       const res = await axios.get(`${baseUrl}api/posts`, {
-        params: { page, sort },
         withCredentials: true,
+        params: { page, sort }
       });
+
       setPosts(res.data.posts);
       setTotalPages(res.data.totalPages);
     } catch (err) {
-      console.error(err);
+      console.error('Failed to fetch posts', err);
     }
   };
 
@@ -63,7 +63,6 @@ const Card = () => {
                   {post.title}
                 </Link>
 
-                {/* Tags */}
                 <div className="flex flex-wrap gap-2 mt-2">
                   {post.tags?.map((tag) => (
                     <Link
@@ -76,12 +75,9 @@ const Card = () => {
                   ))}
                 </div>
 
-                {/* Info Row */}
                 <div className="mt-3 flex flex-wrap gap-4 text-sm text-gray-500 items-center">
                   <span>{new Date(post.createdAt).toLocaleString()}</span>
-                  <span className="flex items-center gap-1">
-                    <MessageCircle className="w-4 h-4" /> {post.commentCount}
-                  </span>
+                  
                   <span className="flex items-center gap-1 text-green-600">
                     <ArrowUp className="w-4 h-4" /> {post.upVote}
                   </span>
@@ -99,21 +95,23 @@ const Card = () => {
       )}
 
       {/* Pagination */}
-      <div className="mt-12 flex justify-center gap-2 flex-wrap">
-        {Array.from({ length: totalPages }, (_, i) => (
-          <button
-            key={i}
-            onClick={() => setPage(i + 1)}
-            className={`px-4 py-2 rounded-md text-sm font-semibold transition ${
-              page === i + 1
-                ? 'bg-black text-white'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-            }`}
-          >
-            {i + 1}
-          </button>
-        ))}
-      </div>
+      {totalPages > 1 && (
+        <div className="mt-12 flex justify-center gap-2 flex-wrap">
+          {Array.from({ length: totalPages }, (_, i) => (
+            <button
+              key={i}
+              onClick={() => setPage(i + 1)}
+              className={`px-4 py-2 rounded-md text-sm font-semibold transition ${
+                page === i + 1
+                  ? 'bg-black text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              {i + 1}
+            </button>
+          ))}
+        </div>
+      )}
     </section>
   );
 };

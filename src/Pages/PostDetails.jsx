@@ -3,24 +3,38 @@ import { useParams } from 'react-router';
 import axios from 'axios';
 import { AuthContext } from '../Provider/AuthProvider';
 import { toast } from 'react-toastify';
-import {ThumbsUp, ThumbsDown, MessageCircle} from 'lucide-react';
+import { ThumbsUp, ThumbsDown, MessageCircle } from 'lucide-react';
 import {
   FacebookShareButton,
   FacebookIcon
 } from 'react-share';
 
 const PostDetails = () => {
-  const { user,userId } = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
   const { id } = useParams();
+  const userEmail = user ? user.email : null;
 
- 
+
+
 
   const [post, setPost] = useState(null);
+  const [userId,setUserId] = useState(null);
   const [comments, setComments] = useState([]);
   const [commentText, setCommentText] = useState('');
 
   const baseUrl = import.meta.env.VITE_BASE_URI;
   const shareUrl = window.location.href;
+
+  const fetchUserByEmail = async (userEmail) => {
+    try {
+      const res = await axios.get(`${baseUrl}api/user/${userEmail}`, {
+        withCredentials: true,
+      });
+      setUserId(res.data._id)
+    } catch (err) {
+      console.error(err.response?.data?.message || 'Fetch failed');
+    }
+  };
 
   const fetchPost = async () => {
     try {
@@ -34,30 +48,29 @@ const PostDetails = () => {
 
   useEffect(() => {
     fetchPost();
-  }, [id]);
+     const timer = setTimeout(() => {
+      fetchUserByEmail(userEmail);
+    }, 3000); 
 
- const handleVote = async (type) => {
-  if (!user) return toast.info('Login to vote');
+    return () => clearTimeout(timer);
+  }, [id,userEmail]);
 
-  try {
-    const res = await axios.post(
-      `${baseUrl}api/posts/${id}/vote`,
-      {
-        type,
-        userId: userId,
-      },
-      { withCredentials: true }
-    );
+  const handleVote = async (type) => {
+    if (!user) return toast.info('Login to vote');
 
-    setPost({
-      ...post,
-      upVote: res.data.upVote,
-      downVote: res.data.downVote,
-    });
-  } catch (err) {
-    toast.error('Vote failed');
-  }
-};
+    try {
+      const res = await axios.post(`${baseUrl}api/posts/${id}/vote`, { type, userId }, { withCredentials: true }
+      );
+
+      setPost({
+        ...post,
+        upVote: res.data.upVote,
+        downVote: res.data.downVote,
+      });
+    } catch (err) {
+      toast.error('Vote failed');
+    }
+  };
 
   const handleComment = async (e) => {
     e.preventDefault();

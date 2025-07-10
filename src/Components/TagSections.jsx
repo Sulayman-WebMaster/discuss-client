@@ -11,7 +11,7 @@ const TagsSections = () => {
   useEffect(() => {
     const fetchTags = async () => {
       try {
-        const res = await axios.get(`${baseUrl}api/tag`);
+        const res = await axios.get(`${baseUrl}api/tags`);
         setTags(res.data);
       } catch (err) {
         console.error('Failed to load tags', err);

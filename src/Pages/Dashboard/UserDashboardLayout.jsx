@@ -1,63 +1,56 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { NavLink, Outlet } from 'react-router';
-import { FaUser, FaPlusCircle, FaListUl, FaHome } from 'react-icons/fa';
+import { FaUser, FaPlusCircle, FaListUl, FaHome, FaBars, FaTimes } from 'react-icons/fa';
 
 const UserDashboardLayout = () => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const navLinks = [
+    { to: '/', label: 'Back Home', icon: <FaHome /> },
+    { to: 'profile', label: 'My Profile', icon: <FaUser /> },
+    { to: 'add-post', label: 'Add Post', icon: <FaPlusCircle /> },
+    { to: 'myposts', label: 'My Posts', icon: <FaListUl /> }
+  ];
+
   return (
-    <div className="flex h-screen bg-white text-gray-900">
+    <div className="flex flex-col md:flex-row h-screen text-gray-900">
+      {/* Mobile Nav */}
+      <div className="md:hidden bg-black text-white p-4 flex justify-between items-center">
+        <h1 className="text-2xl font-bold">Dashboard</h1>
+        <button onClick={() => setIsOpen(!isOpen)} className="text-white text-2xl focus:outline-none">
+          {isOpen ? <FaTimes /> : <FaBars />}
+        </button>
+      </div>
+
       {/* Sidebar */}
-      <div className="w-64 bg-black text-white p-6 space-y-6 shadow-lg">
-        <h1 className="text-3xl font-extrabold mb-6 border-b border-gray-700 pb-2">
+      <div
+        className={`${
+          isOpen ? 'block' : 'hidden'
+        } md:block bg-black text-white w-full md:w-64 p-6 space-y-6 shadow-lg transition-all duration-300`}
+      >
+        <h1 className="text-3xl font-extrabold mb-6 border-b border-gray-700 pb-2 hidden md:block">
           Dashboard
         </h1>
-        <nav className="flex flex-col gap-4">
-          <NavLink
-            to="/"
-            className={({ isActive }) =>
-              isActive
-                ? 'bg-white text-black p-3 rounded-md font-semibold flex items-center gap-3 transition'
-                : 'hover:bg-gray-800 p-3 rounded-md flex items-center gap-3 transition'
-            }
-          >
-            <FaHome className="text-lg" /> Back Home
-          </NavLink>
-          <NavLink
-            to="profile"
-            className={({ isActive }) =>
-              isActive
-                ? 'bg-white text-black p-3 rounded-md font-semibold flex items-center gap-3 transition'
-                : 'hover:bg-gray-800 p-3 rounded-md flex items-center gap-3 transition'
-            }
-          >
-            <FaUser className="text-lg" /> My Profile
-          </NavLink>
-
-          <NavLink
-            to="add-post"
-            className={({ isActive }) =>
-              isActive
-                ? 'bg-white text-black p-3 rounded-md font-semibold flex items-center gap-3 transition'
-                : 'hover:bg-gray-800 p-3 rounded-md flex items-center gap-3 transition'
-            }
-          >
-            <FaPlusCircle className="text-lg" /> Add Post
-          </NavLink>
-
-          <NavLink
-            to="myposts"
-            className={({ isActive }) =>
-              isActive
-                ? 'bg-white text-black p-3 rounded-md font-semibold flex items-center gap-3 transition'
-                : 'hover:bg-gray-800 p-3 rounded-md flex items-center gap-3 transition'
-            }
-          >
-            <FaListUl className="text-lg" /> My Posts
-          </NavLink>
+        <nav className="flex flex-col md:gap-4 gap-2">
+          {navLinks.map((link) => (
+            <NavLink
+              key={link.to}
+              to={link.to}
+              onClick={() => setIsOpen(false)}
+              className={({ isActive }) =>
+                isActive
+                  ? 'bg-white text-black p-3 rounded-md font-semibold flex items-center gap-3 transition'
+                  : 'hover:bg-gray-800 p-3 rounded-md flex items-center gap-3 transition'
+              }
+            >
+              <span className="text-lg">{link.icon}</span> {link.label}
+            </NavLink>
+          ))}
         </nav>
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 bg-white p-8 overflow-y-auto">
+      <div className="flex-1 bg-white p-4 md:p-8 overflow-y-auto">
         <Outlet />
       </div>
     </div>

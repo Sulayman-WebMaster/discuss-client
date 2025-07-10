@@ -23,7 +23,7 @@ const AuthProvider = ({ children }) => {
     const githubProvider = new GithubAuthProvider();
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [UserId, setUserId] = useState(null);
+    
 
     const createUser = (email, password) => {
         setLoading(true);
@@ -141,9 +141,7 @@ const AuthProvider = ({ children }) => {
 
     const authData = {
         user,
-        setUser,
-        UserId,
-        setUserId,
+        setUser,      
         loading,
         createUser,
         loginUser,
