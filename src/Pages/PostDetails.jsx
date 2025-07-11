@@ -96,7 +96,7 @@ const PostDetails = () => {
         {
           postId: id,
           commentText,
-          user: { name: user.displayName, image: user.photoURL }
+          user: { name: user.displayName, image: user.photoURL, email: user.email }
         },
         { withCredentials: true }
       );

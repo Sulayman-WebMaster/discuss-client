@@ -9,10 +9,12 @@ const Reported = () => {
 
   const fetchReports = async () => {
     try {
-      const res = await axios.get(`${baseUrl}api/comments/reported`, { withCredentials: true });
+      const res = await axios.get(`${baseUrl}api/comments/reported`, {
+        withCredentials: true,
+      });
       setReports(res.data);
     } catch (err) {
-      toast.error("Failed to load reports");
+      toast.error('Failed to load reports');
     }
   };
 
@@ -22,11 +24,30 @@ const Reported = () => {
 
   const handleAction = async (id, action) => {
     try {
-      await axios.put(`${baseUrl}api/comments/action/${id}`, { action }, { withCredentials: true });
-      toast.success(`Action ${action} completed`);
-      fetchReports();
+      await axios.put(
+        `${baseUrl}api/comments/action/${id}`,
+        { action },
+        { withCredentials: true }
+      );
+      toast.success(`Action "${action}" completed`);
+
+      // Handle UI update
+      if (action === 'delete') {
+        setReports((prev) => prev.filter((c) => c._id !== id));
+      } else {
+        setReports((prev) =>
+          prev.map((c) =>
+            c._id === id
+              ? {
+                  ...c,
+                  ...(action === 'resolve' ? { isResolved: true } : {}),
+                }
+              : c
+          )
+        );
+      }
     } catch (err) {
-      toast.error("Action failed");
+      toast.error('Action failed');
     }
   };
 
@@ -54,23 +75,38 @@ const Reported = () => {
             <tbody>
               {reports.map((c) => (
                 <tr key={c._id} className="bg-white hover:bg-gray-50 border-b">
-                  <td className="p-3">{c.commentText}</td>
+                  <td className="p-3">
+                    <div className="flex flex-col">
+                      <span>{c.commentText}</span>
+                      {c.isResolved && (
+                        <span className="text-xs text-green-600 mt-1 italic">
+                          Resolved
+                        </span>
+                      )}
+                    </div>
+                  </td>
                   <td className="p-3">
                     <div className="flex items-center gap-2">
-                      <img src={c.user?.image || '/default.png'} className="w-8 h-8 rounded-full" />
+                      <img
+                        src={c.user?.image || '/default.png'}
+                        className="w-8 h-8 rounded-full"
+                        alt="User"
+                      />
                       <div>
                         <p className="font-semibold">{c.user?.name}</p>
                         <p className="text-xs text-gray-500">{c.user?.email}</p>
                       </div>
                     </div>
                   </td>
-                  <td className="p-3 text-red-600 font-medium">{c.report?.feedback}</td>
+                  <td className="p-3 text-red-600 font-medium">
+                    {c.report?.feedback}
+                  </td>
                   <td className="p-3">{c.report?.reportedBy}</td>
                   <td className="p-3 text-xs text-gray-500">
                     {new Date(c.report?.reportedAt).toLocaleString()}
                   </td>
                   <td className="p-3 text-center">
-                    <div className="flex justify-center gap-2">
+                    <div className="flex justify-center gap-2 flex-wrap">
                       <button
                         onClick={() => handleAction(c._id, 'resolve')}
                         className="px-3 py-1 rounded bg-green-600 hover:bg-green-700 text-white text-xs flex items-center gap-1"
