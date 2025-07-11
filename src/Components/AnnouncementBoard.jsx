@@ -12,13 +12,14 @@ import { toast } from 'react-toastify';
 const AnnouncementBoard = () => {
   const [announcements, setAnnouncements] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
-  const [cardsPerPage, setCardsPerPage] = useState(3); // default to large screen
+  const [cardsPerPage, setCardsPerPage] = useState(3); 
   const baseUrl = import.meta.env.VITE_BASE_URI;
 
   const fetchAnnouncements = async () => {
     try {
       const res = await axios.get(`${baseUrl}api/annoucements`);
       setAnnouncements(res.data);
+      console.log(res.data)
     } catch (err) {
       toast.error('Failed to fetch announcements');
     }

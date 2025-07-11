@@ -26,27 +26,13 @@ const Login = () => {
     }
   };
 
-  const saveUser = async (user) => {
-    try {
-      const res = await axios.post(`${baseUrl.replace(/\/$/, '')}/api/user`, {
-        name: user.displayName || "Anonymous",
-        email: user.email,
-        image: user.photoURL || "",
-      }, {
-        withCredentials: true,
-      });
-
-         } catch (err) {
-      console.error(err);
-      toast.error('Saving user info failed');
-      throw err;
-    }
-  };
+  
 
   const handleLoginSuccess = async (user) => {
     try {
-      await saveUser(user);
+      
       await fetchToken(user.email);
+      console.log(user)
       toast.success('Login successful!');
       navigate('/');
     } catch (err) {

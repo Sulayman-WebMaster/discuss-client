@@ -20,6 +20,7 @@ import ManageUser from "../Pages/Admin/ManageUser";
 import AdminProfile from "../Pages/Admin/AdminProfile";
 import AnnouncementForm from "../Pages/Admin/Annoucement";
 import Reported from "../Pages/Admin/Reported";
+import PrivateRoute from "../Provider/PrivateRoute";
 
 
 export const router = createBrowserRouter([
@@ -41,7 +42,7 @@ export const router = createBrowserRouter([
             },
             {
                 path:"membership",
-                element: <Membership/>
+                element: <PrivateRoute><Membership/></PrivateRoute>
             },
             {
                 path:"post/:id",
@@ -64,7 +65,7 @@ export const router = createBrowserRouter([
     },
     {
         path: "/user-dashboard",
-        element: <UserOnly><UserDashboardLayout/></UserOnly>,
+        element: <PrivateRoute><UserOnly><UserDashboardLayout/></UserOnly></PrivateRoute>,
         children:[
             {
                 index: true,
@@ -87,7 +88,7 @@ export const router = createBrowserRouter([
     },
     {
         path: "/admin-dashboard",
-        element: <Admin><AdminDashboard/></Admin>,
+        element: <PrivateRoute><Admin><AdminDashboard/></Admin></PrivateRoute>,
         children:[
             {
                 index: true,

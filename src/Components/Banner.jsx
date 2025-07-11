@@ -20,7 +20,7 @@ const Banner = () => {
     try {
       const res = await axios.get(`${baseUrl}api/search/popular-tag`);
       setPopularTags(res.data);
-      console.log(res.data)
+      
     } catch (err) {
       console.error('Failed to load popular tags');
     }
