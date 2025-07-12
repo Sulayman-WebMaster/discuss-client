@@ -21,6 +21,7 @@ import AdminProfile from "../Pages/Admin/AdminProfile";
 import AnnouncementForm from "../Pages/Admin/Annoucement";
 import Reported from "../Pages/Admin/Reported";
 import PrivateRoute from "../Provider/PrivateRoute";
+import TagPosts from "../Pages/TagPosts";
 
 
 export const router = createBrowserRouter([
@@ -55,6 +56,10 @@ export const router = createBrowserRouter([
             {
                 path: "unauthorized",
                 element: <Unauthorized/>
+            },
+            {
+                path: "tags/:tag",
+                element:<TagPosts/>
             }
            
         ]

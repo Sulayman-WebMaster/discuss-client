@@ -32,7 +32,6 @@ const Login = () => {
     try {
       
       await fetchToken(user.email);
-      console.log(user)
       toast.success('Login successful!');
       navigate('/');
     } catch (err) {

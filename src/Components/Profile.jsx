@@ -35,7 +35,7 @@ const Profile = () => {
 
   
   const role = user?.role || 'user'; 
-  console.log(user?.role)
+
 
   return (
     <div className="relative inline-block text-left" ref={dropdownRef}>

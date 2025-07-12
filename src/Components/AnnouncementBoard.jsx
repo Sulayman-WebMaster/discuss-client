@@ -19,8 +19,7 @@ const AnnouncementBoard = () => {
     try {
       const res = await axios.get(`${baseUrl}api/annoucements`);
       setAnnouncements(res.data);
-      console.log(res.data)
-    } catch (err) {
+      } catch (err) {
       toast.error('Failed to fetch announcements');
     }
   };
