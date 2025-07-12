@@ -16,7 +16,7 @@ const Login = () => {
 
   const fetchToken = async (email) => {
     try {
-      await axios.get(`${baseUrl.replace(/\/$/, '')}/api/jwt/${email}`, {
+      await axios.get(`${baseUrl}api/jwt/${email}`, {
         withCredentials: true,
       });
     } catch (error) {

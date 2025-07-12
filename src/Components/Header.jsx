@@ -57,7 +57,9 @@ const Header = () => {
 
         {/* Right: Bell + Profile/Login */}
         <div className="flex items-center gap-6 relative">
-          <button
+         {
+          user ? (
+             <button
             className={`relative text-gray-600 hover:text-black transition ${
               announcementCount > 0 ? 'animate-shake' : ''
             }`}
@@ -69,6 +71,15 @@ const Header = () => {
               </span>
             )}
           </button>
+          ):
+          (
+             <button>
+          
+            <Bell className="w-7 h-7" />
+            
+          </button>
+          )
+         }
 
           {user ? (
             <Profile />
