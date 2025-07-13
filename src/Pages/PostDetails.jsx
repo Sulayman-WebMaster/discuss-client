@@ -3,7 +3,7 @@ import { useParams } from 'react-router';
 import axios from 'axios';
 import { AuthContext } from '../Provider/AuthProvider';
 import { toast } from 'react-toastify';
-import { ThumbsUp, ThumbsDown, MessageCircle } from 'lucide-react';
+import { ThumbsUp, ThumbsDown, MessageCircle, X } from 'lucide-react';
 import {
   FacebookShareButton,
   FacebookIcon
@@ -19,6 +19,7 @@ const PostDetails = () => {
   const [comments, setComments] = useState([]);
   const [commentText, setCommentText] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedComment, setSelectedComment] = useState(null); // For modal
 
   const COMMENTS_PER_PAGE = 5;
   const baseUrl = import.meta.env.VITE_BASE_URI;
@@ -109,7 +110,7 @@ const PostDetails = () => {
         ...comments
       ]);
       setCommentText('');
-      setCurrentPage(1); // Reset pagination on new comment
+      setCurrentPage(1);
       toast.success('Comment added');
     } catch (err) {
       toast.error('Could not add comment');
@@ -156,7 +157,8 @@ const PostDetails = () => {
   if (!post) return <p className="text-center mt-10">Loading...</p>;
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-10">
+    <div className="max-w-7xl mx-auto px-4 py-10 relative">
+      {/* Main Post Content */}
       <div className="bg-white rounded-md shadow-md p-6 space-y-4">
         {/* Header */}
         <div className="flex items-center gap-4">
@@ -238,7 +240,21 @@ const PostDetails = () => {
                   <td className="p-3 border-b font-medium text-gray-800">
                     {c.user?.name || 'Anonymous'}
                   </td>
-                  <td className="p-3 border-b text-gray-700">{c.commentText}</td>
+                  <td className="p-3 border-b text-gray-700">
+                    {c.commentText.length > 20 ? (
+                      <>
+                        {c.commentText.slice(0, 20)}...
+                        <button
+                          onClick={() => setSelectedComment(c)}
+                          className="text-blue-600 ml-1 underline hover:text-blue-800"
+                        >
+                          Read More
+                        </button>
+                      </>
+                    ) : (
+                      c.commentText
+                    )}
+                  </td>
                   <td className="p-3 border-b">
                     <select
                       value={c.feedback}
@@ -308,6 +324,22 @@ const PostDetails = () => {
           </div>
         )}
       </section>
+
+      {/* Comment Modal */}
+      {selectedComment && (
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center">
+          <div className="bg-white rounded-lg p-6 w-full max-w-lg shadow-xl relative">
+            <button
+              onClick={() => setSelectedComment(null)}
+              className="absolute top-2 right-2 text-gray-500 hover:text-black"
+            >
+              <X />
+            </button>
+            <h3 className="text-lg font-semibold mb-4 text-gray-800">Full Comment</h3>
+            <p className="text-gray-700 whitespace-pre-wrap">{selectedComment.commentText}</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
