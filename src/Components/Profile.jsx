@@ -29,7 +29,7 @@ const Profile = () => {
   handleLogout(); 
 
   try {
-    await axios.post(`${import.meta.env.VITE_BASE_URI}logout`, {}, {
+    await axios.post(`${import.meta.env.VITE_BASE_URI}api/logout`, {}, {
       withCredentials: true,
     });
     setOpen(false);
