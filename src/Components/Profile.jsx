@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect, useContext } from 'react';
 import { FaSignOutAlt, FaTachometerAlt } from 'react-icons/fa';
 import { Link } from 'react-router';
 import { AuthContext } from '../Provider/AuthProvider';
+import axios from 'axios';
 
 const Profile = () => {
   const [open, setOpen] = useState(false);
@@ -25,13 +26,17 @@ const Profile = () => {
     'https://i.postimg.cc/rmzgbYvr/Screenshot-2025-05-06-192351.png';
   
   const handleLogoutClick = async () => {
-    handleLogout();
-    await fetch(`${import.meta.env.VITE_BASE_URI}logout`, {
-      method: 'POST',
-      credentials: 'include',
+  handleLogout(); 
+
+  try {
+    await axios.post(`${import.meta.env.VITE_BASE_URI}logout`, {}, {
+      withCredentials: true,
     });
     setOpen(false);
-  };
+  } catch (error) {
+    console.error('Logout error:', error?.response?.data || error.message);
+  }
+};
 
   
   const role = user?.role || 'user'; 
