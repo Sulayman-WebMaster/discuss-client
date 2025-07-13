@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { Users, Shield, CheckCircle } from 'lucide-react'; 
+import { Link } from 'react-router';
 
 const AdminHome = () => {
   const [stats, setStats] = useState({
@@ -66,18 +67,18 @@ const AdminHome = () => {
       </div>
 
       <div className="flex flex-wrap gap-4">
-        <a
-          href="/manage-users"
+        <Link to="/admin-dashboard/manage-users"
+          
           className="bg-black text-white px-6 py-3 rounded-md hover:bg-gray-900 transition font-semibold"
         >
           Manage Users
-        </a>
-        <a
-          href="/manage-posts"
+        </Link>
+        <Link
+          to="/admin-dashboard/reported"
           className="bg-black text-white px-6 py-3 rounded-md hover:bg-gray-900 transition font-semibold"
         >
           Manage Posts
-        </a>
+        </Link>
             </div>
     </div>
   );
