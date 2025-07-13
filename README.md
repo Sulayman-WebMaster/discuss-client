@@ -1,13 +1,66 @@
-# React + Vite
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+# 💬 Discuss - Community Forum Platform
 
-Currently, two official plugins are available:
+**Discuss** is a modern and user-friendly forum application built for communities to ask questions, share knowledge, and connect through meaningful discussions. It features a robust authentication system, real-time interactions, voting, reporting, and more — all wrapped in a clean and responsive UI.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## Expanding the ESLint configuration
+## 🚀 Live Demo
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
-# b11a12-client-side-Sulayman-WebMaster
+🌐 [View Live](https://tangerine-malasada-a8352e.netlify.app/)
+
+---
+
+## 📸 Screenshots
+
+
+
+| Home Page | Post Details | Admin Panel |
+|----------|---------------|--------------|
+| ![Home](https://i.postimg.cc/nrCBSYhG/image.png) | ![](https://i.postimg.cc/cJfKD1GC/image.png) | ![Admin](https://i.postimg.cc/7LX4PjgX/image.png) |
+
+---
+
+## 🔑 Features
+
+- 🔐 **Authentication** (Google/GitHub login, JWT with HttpOnly Cookies)
+- 📝 **Create & View Posts**
+- 💬 **Comment System** with pagination
+- 👍👎 **Upvote / Downvote** functionality
+- 🚩 **Report Comments** with feedback selection
+- 📤 **Announcements** by Admin
+- 🔍 **Tag-Based Search**
+- 🧑‍💼 **Role-Based Access** (Admin / User)
+- 📊 **Post Count Limit** for non-members
+- 📱 **Responsive UI** with modern design
+- 📣 **Social Share** (Facebook, etc.)
+
+---
+
+## 🛠️ Tech Stack
+
+### Frontend
+- **React.js** (Vite)
+- **Tailwind CSS**
+- **React Router**
+- **React Toastify**
+- **Lucide Icons**
+- **React Share**
+- **React Hook Form**
+- **TanStack Query**
+
+### Backend
+- **Node.js**
+- **Express.js**
+- **MongoDB + Mongoose**
+- **Firebase Auth**
+- **JWT + Cookies**
+- **Multer + Cloudinary** (for image uploads)
+
+---
+
+## ⚙️ Setup Instructions
+
+1. **Clone the repo**
+   ```bash
+   git clone https://github.com/yourusername/discuss.git
