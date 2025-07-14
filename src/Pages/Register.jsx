@@ -13,6 +13,7 @@ const Register = () => {
   const { createUser, updateUser, googleSignup, githubSignup } = useContext(AuthContext);
   const { register, handleSubmit, formState: { errors }, reset } = useForm();
   const [uploading, setUploading] = useState(false);
+  const baseUrl = import.meta.env.VITE_BASE_URI;
 
    const fetchToken = async (email) => {
   try {
