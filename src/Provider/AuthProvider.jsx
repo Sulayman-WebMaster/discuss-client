@@ -108,7 +108,31 @@ const AuthProvider = ({ children }) => {
  
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      setLoading(true);
+      if (currentUser) {
+        try {
+          const res = await axios.get(
+            `${import.meta.env.VITE_BASE_URI}api/user/${currentUser.email}`,
+            { withCredentials: true }
+          );
+
+          const dbUser = res.data;
+          setUserId(dbUser._id)        
+          setUser({
+            uid: dbUser._id,
+            email: dbUser.email,
+            displayName: dbUser.name,
+            photoURL: dbUser.image,
+            role: dbUser.role || 'user', 
+          });
    
+        } catch (error) {
+       
+        }
+      } else {
+        setUser(null);
+      }
+      setLoading(false);
     });
 
     return () => unsubscribe();
