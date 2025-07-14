@@ -14,15 +14,22 @@ const Register = () => {
   const { register, handleSubmit, formState: { errors }, reset } = useForm();
   const [uploading, setUploading] = useState(false);
 
-  const fetchToken = async (email) => {
-    try {
-      await axios.get(`${import.meta.env.VITE_BASE_URI}api/jwt/${email}`, {
-        withCredentials: true,
-      });
-    } catch (error) {
-      toast.error("JWT token fetch failed");
-    }
-  };
+   const fetchToken = async (email) => {
+  try {
+    await axios.get(`${baseUrl}api/jwt/${email}`, {
+      withCredentials: true,
+      headers: {
+        'Cache-Control': 'no-store, no-cache, must-revalidate, private',
+        Pragma: 'no-cache',
+        Expires: '0',
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    toast.error('Token fetch failed');
+    throw error;
+  }
+};
 
   const saveUserToDB = async ({ email, name, image }) => {
     try {

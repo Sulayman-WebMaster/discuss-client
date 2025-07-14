@@ -14,17 +14,22 @@ const Login = () => {
 
   const baseUrl = import.meta.env.VITE_BASE_URI;
 
-  const fetchToken = async (email) => {
-    try {
-      await axios.get(`${baseUrl}api/jwt/${email}`, {
-        withCredentials: true,
-      });
-    } catch (error) {
-      console.error(error);
-      toast.error('Token fetch failed');
-      throw error;
-    }
-  };
+ const fetchToken = async (email) => {
+  try {
+    await axios.get(`${baseUrl}api/jwt/${email}`, {
+      withCredentials: true,
+      headers: {
+        'Cache-Control': 'no-store, no-cache, must-revalidate, private',
+        Pragma: 'no-cache',
+        Expires: '0',
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    toast.error('Token fetch failed');
+    throw error;
+  }
+};
 
   
 
