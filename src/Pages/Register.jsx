@@ -39,7 +39,7 @@ const Register = () => {
         name,
         image,
       }, { withCredentials: true });
-
+     console.log(res.data)
       return res.data; 
     } catch (err) {
       console.error('User save error:', err);
@@ -80,10 +80,10 @@ const Register = () => {
       // Set user in context
       setUserId(savedUser._id);
       setUser({
-        uid: savedUser.uid,
+        uid: savedUser._id,
         email: savedUser.email,
-        displayName: savedUser.displayName,
-        photoURL: savedUser.photoURL,
+        displayName: savedUser.name,
+        photoURL: savedUser.image,
         role: savedUser.role || 'user',
       });
 

@@ -119,22 +119,15 @@ const AuthProvider = ({ children }) => {
           const dbUser = res.data;
           setUserId(dbUser._id)        
           setUser({
-            uid: dbUser.uid,
+            uid: dbUser._id,
             email: dbUser.email,
-            displayName: dbUser.displayName,
-            photoURL: dbUser.photoURL,
+            displayName: dbUser.name,
+            photoURL: dbUser.image,
             role: dbUser.role || 'user', 
           });
    
         } catch (error) {
-          console.error('Error fetching user role:', error);
-          setUser({
-            uid: currentUser.uid,
-            email: currentUser.email,
-            displayName: currentUser.displayName,
-            photoURL: currentUser.photoURL,
-            role: 'user',
-          });
+       
         }
       } else {
         setUser(null);
