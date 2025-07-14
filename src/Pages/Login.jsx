@@ -3,13 +3,23 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import { AuthContext } from '../Provider/AuthProvider';
 import { FaGithub, FaGoogle } from 'react-icons/fa';
-import { useNavigate, Link } from 'react-router';
+import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 
 const Login = () => {
   const navigate = useNavigate();
-  const { loginUser, googleSignup, githubSignup } = useContext(AuthContext);
-  const { register, handleSubmit, formState: { errors } } = useForm();
+  const {
+    loginUser,
+    googleSignup,
+    githubSignup,
+    setUser,
+    setUserId,
+  } = useContext(AuthContext);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
   const [loading, setLoading] = useState(false);
   const baseUrl = import.meta.env.VITE_BASE_URI;
 
@@ -53,12 +63,52 @@ const Login = () => {
     }
   };
 
+  const saveUserToDB = async ({ email, name, image }) => {
+    try {
+      const res = await axios.post(
+        `${baseUrl}api/user`,
+        {
+          email,
+          name,
+          image,
+        },
+        { withCredentials: true }
+      );
+
+      return res.data.user;
+    } catch (err) {
+      console.error('User save error:', err);
+      toast.error('Failed to save user to DB');
+      throw err;
+    }
+  };
+
   const handleProviderLogin = async (providerFunc) => {
     setLoading(true);
     try {
       const result = await providerFunc();
-      await handleLoginSuccess(result.user);
+      const { displayName, email, photoURL } = result.user;
+
+      const savedUser = await saveUserToDB({
+        name: displayName,
+        email,
+        image: photoURL,
+      });
+
+      setUserId(savedUser._id);
+      setUser({
+        uid: savedUser._id,
+        email: savedUser.email,
+        displayName: savedUser.name,
+        photoURL: savedUser.image,
+        role: savedUser.role || 'user',
+      });
+
+      await fetchToken(savedUser.email);
+      toast.success('Login successful!');
+      navigate('/');
     } catch (err) {
+      console.error(err);
       toast.error(err.message || 'Provider login failed');
     } finally {
       setLoading(false);
@@ -71,7 +121,9 @@ const Login = () => {
         onSubmit={handleSubmit(onSubmit)}
         className="bg-white p-10 rounded-xl shadow-lg w-full max-w-md"
       >
-        <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">Login to Discuss</h2>
+        <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">
+          Login to Discuss
+        </h2>
 
         <div className="mb-4">
           <input
@@ -79,7 +131,9 @@ const Login = () => {
             {...register('email', { required: true })}
             className="w-full px-4 py-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-black transition"
           />
-          {errors.email && <p className="text-sm text-red-500 mt-1">Email is required</p>}
+          {errors.email && (
+            <p className="text-sm text-red-500 mt-1">Email is required</p>
+          )}
         </div>
 
         <div className="mb-4">
@@ -88,17 +142,26 @@ const Login = () => {
             placeholder="Password"
             {...register('password', {
               required: true,
-              minLength: { value: 6, message: 'Password must be at least 6 characters' }
+              minLength: {
+                value: 6,
+                message: 'Password must be at least 6 characters',
+              },
             })}
             className="w-full px-4 py-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-black transition"
           />
-          {errors.password && <p className="text-sm text-red-500 mt-1">{errors.password.message}</p>}
+          {errors.password && (
+            <p className="text-sm text-red-500 mt-1">
+              {errors.password.message}
+            </p>
+          )}
         </div>
 
         <button
           type="submit"
           disabled={loading}
-          className={`w-full bg-black text-white py-3 rounded-md font-semibold transition ${loading ? 'opacity-60 cursor-not-allowed' : 'hover:bg-gray-900'}`}
+          className={`w-full bg-black text-white py-3 rounded-md font-semibold transition ${
+            loading ? 'opacity-60 cursor-not-allowed' : 'hover:bg-gray-900'
+          }`}
         >
           {loading ? 'Logging in...' : 'Login'}
         </button>
