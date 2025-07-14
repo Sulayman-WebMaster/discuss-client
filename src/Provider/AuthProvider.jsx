@@ -23,6 +23,7 @@ const AuthProvider = ({ children }) => {
   const githubProvider = new GithubAuthProvider();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [userId, setUserId] = useState(null);
 
   const createUser = (email, password) => {
     setLoading(true);
@@ -116,13 +117,12 @@ const AuthProvider = ({ children }) => {
           );
 
           const dbUser = res.data;
-      
-
+          setUserId(dbUser._id)        
           setUser({
-            uid: currentUser.uid,
-            email: currentUser.email,
-            displayName: currentUser.displayName,
-            photoURL: currentUser.photoURL,
+            uid: dbUser.uid,
+            email: dbUser.email,
+            displayName: dbUser.displayName,
+            photoURL: dbUser.photoURL,
             role: dbUser.role || 'user', 
           });
    
@@ -148,6 +148,8 @@ const AuthProvider = ({ children }) => {
   const authData = {
     user,
     setUser,
+    userId,
+    setUserId,
     loading,
     createUser,
     loginUser,

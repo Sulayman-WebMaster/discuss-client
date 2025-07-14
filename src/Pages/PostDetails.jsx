@@ -10,16 +10,15 @@ import {
 } from 'react-share';
 
 const PostDetails = () => {
-  const { user } = useContext(AuthContext);
+  const { user,userId } = useContext(AuthContext);
   const { id } = useParams();
   const userEmail = user ? user.email : null;
 
   const [post, setPost] = useState(null);
-  const [userId, setUserId] = useState(null);
   const [comments, setComments] = useState([]);
   const [commentText, setCommentText] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const [selectedComment, setSelectedComment] = useState(null); // For modal
+  const [selectedComment, setSelectedComment] = useState(null); 
 
   const COMMENTS_PER_PAGE = 5;
   const baseUrl = import.meta.env.VITE_BASE_URI;
@@ -31,17 +30,7 @@ const PostDetails = () => {
     'Inappropriate content',
   ];
 
-  const fetchUserByEmail = async (userEmail) => {
-    try {
-      const res = await axios.get(`${baseUrl}api/user/${userEmail}`, {
-        withCredentials: true,
-      });
-      setUserId(res.data._id);
-    } catch (err) {
-      console.error(err.response?.data?.message || 'Fetch failed');
-    }
-  };
-
+ 
   const fetchPost = async () => {
     try {
       const res = await axios.get(`${baseUrl}api/posts/${id}`, {
@@ -60,11 +49,7 @@ const PostDetails = () => {
 
   useEffect(() => {
     fetchPost();
-    const timer = setTimeout(() => {
-      if (userEmail) fetchUserByEmail(userEmail);
-    }, 3000);
-    return () => clearTimeout(timer);
-  }, [id, userEmail]);
+    }, [id, userEmail]);
 
   const handleVote = async (type) => {
     if (!user) return toast.info('Login to vote');

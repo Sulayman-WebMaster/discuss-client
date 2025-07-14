@@ -10,39 +10,41 @@ const imgbbApiKey = '7648b5e8c439a674a01fa42348137dbe';
 
 const Register = () => {
   const navigate = useNavigate();
-  const { createUser, updateUser, googleSignup, githubSignup } = useContext(AuthContext);
+  const { createUser, updateUser, googleSignup, githubSignup, setUserId, setUser } = useContext(AuthContext);
   const { register, handleSubmit, formState: { errors }, reset } = useForm();
   const [uploading, setUploading] = useState(false);
   const baseUrl = import.meta.env.VITE_BASE_URI;
 
-   const fetchToken = async (email) => {
-  try {
-    await axios.get(`${baseUrl}api/jwt/${email}`, {
-      withCredentials: true,
-      headers: {
-        'Cache-Control': 'no-store, no-cache, must-revalidate, private',
-        Pragma: 'no-cache',
-        Expires: '0',
-      },
-    });
-  } catch (error) {
-    console.error(error);
-    toast.error('Token fetch failed');
-    throw error;
-  }
-};
+  const fetchToken = async (email) => {
+    try {
+      await axios.get(`${baseUrl}api/jwt/${email}`, {
+        withCredentials: true,
+        headers: {
+          'Cache-Control': 'no-store, no-cache, must-revalidate, private',
+          Pragma: 'no-cache',
+          Expires: '0',
+        },
+      });
+    } catch (error) {
+      console.error(error);
+      toast.error('Token fetch failed');
+      throw error;
+    }
+  };
 
   const saveUserToDB = async ({ email, name, image }) => {
     try {
-      const res= await axios.post(`${import.meta.env.VITE_BASE_URI}api/user`, {
+      const res = await axios.post(`${baseUrl}api/user`, {
         email,
         name,
         image,
       }, { withCredentials: true });
-      
+
+      return res.data; 
     } catch (err) {
       console.error('User save error:', err);
       toast.error('Failed to save user to DB');
+      throw err;
     }
   };
 
@@ -50,9 +52,10 @@ const Register = () => {
     const { name, email, password, image } = data;
 
     try {
-      const imageFile = image[0];
       setUploading(true);
 
+      // Upload image to imgbb
+      const imageFile = image[0];
       const formData = new FormData();
       formData.append('image', imageFile);
 
@@ -66,11 +69,23 @@ const Register = () => {
 
       const imageUrl = imgbbData.data.url;
 
+      // Create user with Firebase
       await createUser(email, password);
       await updateUser({ displayName: name, photoURL: imageUrl });
 
-      await saveUserToDB({ email, name, image: imageUrl });
+      // Save to DB and fetch token
+      const savedUser = await saveUserToDB({ email, name, image: imageUrl });
       await fetchToken(email);
+
+      // Set user in context
+      setUserId(savedUser._id);
+      setUser({
+        uid: savedUser.uid,
+        email: savedUser.email,
+        displayName: savedUser.displayName,
+        photoURL: savedUser.photoURL,
+        role: savedUser.role || 'user',
+      });
 
       toast.success('Registration successful!');
       reset();
@@ -88,8 +103,17 @@ const Register = () => {
       const result = await providerFunc();
       const { displayName, email, photoURL } = result.user;
 
-      await saveUserToDB({ name: displayName, email, image: photoURL });
+      const savedUser = await saveUserToDB({ name: displayName, email, image: photoURL });
       await fetchToken(email);
+
+      setUserId(savedUser._id);
+      setUser({
+        uid: savedUser.uid,
+        email: savedUser.email,
+        displayName: savedUser.displayName,
+        photoURL: savedUser.photoURL,
+        role: savedUser.role || 'user',
+      });
 
       toast.success('Login successful!');
       navigate('/');
@@ -135,7 +159,6 @@ const Register = () => {
         />
         {errors.password && <p className="text-sm text-red-500 mb-2">{errors.password.message}</p>}
 
-        {/* File Upload */}
         <label className="w-full mb-3 cursor-pointer flex items-center gap-3 border px-4 py-2 rounded-md bg-gray-100 hover:bg-gray-200 transition">
           <FaUpload className="text-gray-600" />
           <span className="text-sm text-gray-700">Upload Profile Picture</span>
@@ -148,7 +171,6 @@ const Register = () => {
         </label>
         {errors.image && <p className="text-sm text-red-500 mb-2">Profile image is required</p>}
 
-        {/* Submit Button */}
         <button
           type="submit"
           className="w-full bg-black text-white py-2 rounded-md hover:bg-gray-800 transition"
@@ -157,7 +179,6 @@ const Register = () => {
           {uploading ? 'Uploading...' : 'Sign Up'}
         </button>
 
-        {/* OAuth */}
         <div className="flex justify-center space-x-4 mt-5">
           <button
             type="button"
