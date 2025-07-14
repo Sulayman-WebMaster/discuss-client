@@ -39,8 +39,8 @@ const Register = () => {
         name,
         image,
       }, { withCredentials: true });
-     console.log(res.data)
-      return res.data; 
+   
+      return res.data.user; 
     } catch (err) {
       console.error('User save error:', err);
       toast.error('Failed to save user to DB');
@@ -108,7 +108,7 @@ const Register = () => {
 
       setUserId(savedUser._id);
       setUser({
-        uid: savedUser.uid,
+        uid: savedUser._id,
         email: savedUser.email,
         displayName: savedUser.displayName,
         photoURL: savedUser.photoURL,

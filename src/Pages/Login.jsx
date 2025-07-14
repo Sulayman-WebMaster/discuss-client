@@ -8,35 +8,62 @@ import axios from 'axios';
 
 const Login = () => {
   const navigate = useNavigate();
-  const { loginUser, googleSignup, githubSignup } = useContext(AuthContext);
+  const {
+    loginUser,
+    googleSignup,
+    githubSignup,
+    setUser,
+    setUserId
+  } = useContext(AuthContext);
+
   const { register, handleSubmit, formState: { errors } } = useForm();
   const [loading, setLoading] = useState(false);
 
   const baseUrl = import.meta.env.VITE_BASE_URI;
 
- const fetchToken = async (email) => {
-  try {
-    await axios.get(`${baseUrl}api/jwt/${email}`, {
-      withCredentials: true,
-      headers: {
-        'Cache-Control': 'no-store, no-cache, must-revalidate, private',
-        Pragma: 'no-cache',
-        Expires: '0',
-      },
-    });
-  } catch (error) {
-    console.error(error);
-    toast.error('Token fetch failed');
-    throw error;
-  }
-};
+  const fetchToken = async (email) => {
+    try {
+      await axios.get(`${baseUrl}api/jwt/${email}`, {
+        withCredentials: true,
+        headers: {
+          'Cache-Control': 'no-store, no-cache, must-revalidate, private',
+          Pragma: 'no-cache',
+          Expires: '0',
+        },
+      });
+    } catch (error) {
+      console.error(error);
+      toast.error('Token fetch failed');
+      throw error;
+    }
+  };
 
-  
+  const fetchUserFromDB = async (email) => {
+    try {
+      const res = await axios.get(`${baseUrl}api/user/${email}`, { withCredentials: true });
+      return res.data.user;
+    } catch (err) {
+      console.error('Failed to fetch user from DB:', err);
+      toast.error('User not found in database');
+      throw err;
+    }
+  };
 
   const handleLoginSuccess = async (user) => {
     try {
-      
       await fetchToken(user.email);
+
+      const fullUser = await fetchUserFromDB(user.email);
+
+      setUserId(fullUser._id);
+      setUser({
+        uid: fullUser._id,
+        email: fullUser.email,
+        displayName: fullUser.name,
+        photoURL: fullUser.image,
+        role: fullUser.role || 'user',
+      });
+
       toast.success('Login successful!');
       navigate('/');
     } catch (err) {
