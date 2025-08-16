@@ -119,7 +119,7 @@ const AuthProvider = ({ children }) => {
           const dbUser = res.data;
           setUserId(dbUser._id)        
           setUser({
-            uid: dbUser._id
+            uid: dbUser._id,
             email: dbUser.email,
             displayName: dbUser.name,
             photoURL: dbUser.image,
