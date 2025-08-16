@@ -121,7 +121,7 @@ const AuthProvider = ({ children }) => {
           setUser({
             uid: dbUser._id,
             email: dbUser.email,
-            displayName: dbUser.name,
+            displayName: dbUser.name, 
             photoURL: dbUser.image,
             role: dbUser.role || 'user', 
           });
